@@ -1,8 +1,11 @@
 #web app
 
 from flask import Flask, request,render_template
+import joblib
 
+DBSModel = joblib.load('DBS_SGD.pkl')
 app = Flask(__name__)
+
 @app.route("/",methods=["GET","POST"])
 def index():
     q = request.form.get("q")
@@ -19,8 +22,9 @@ def dbs():
 
 @app.route("/dbsPred",methods=["GET","POST"])
 def dbsPred():
-    
-    return(render_template("dbsPred.html"))
+    q = float(request.form.get("q")) 
+    r = DBSModel.predict([[q]])
+    return(render_template("dbsPred.html", r=r[0][0]))
 
 if __name__=="__main__":
     app.run()
